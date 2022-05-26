@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns:xml-module="http://www.mulesoft.org/schema/mule/xml-module"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/xml-module http://www.mulesoft.org/schema/mule/xml-module/current/mule-xml-module.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="f8fd2608-6aa7-48ed-a127-891db7417f97" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<file:config name="File_Config" doc:name="File Config" doc:id="2b84c5e0-da6c-4e52-8cd3-582d1c648cc9" />
+	<xml-module:config name="XML_Config" doc:name="XML Config" doc:id="ba142727-722a-402f-ba8f-7ef9ef84b16b" />
+	<xml-module:config name="XML_Config1" doc:name="XML Config" doc:id="b46a89f3-e091-430c-abd5-69909dd40955" />
+	<file:config name="File_Config1" doc:name="File Config" doc:id="8142eebb-f829-4501-9841-bdf53e92576f" />
+	<email:smtp-config name="Email_SMTP" doc:name="Email SMTP" doc:id="ed1d7c37-9a65-4cf7-af96-f444bcdd6b0d" >
+		<email:smtp-connection host="smtp.gmail.com" port="587" user="sandiduttt2@gmail.com" password="@Hmt#19.63%" >
+			<email:properties >
+				<email:property key="mail.smtp.starttls.enable" value="true" />
+			</email:properties>
+		</email:smtp-connection>
+	</email:smtp-config>
+	<email:imap-config name="Email_IMAP" doc:name="Email IMAP" doc:id="c482e8a0-ba69-404d-b5b5-dcdc8def1503" >
+		<email:imap-connection host="smtp.gmail.com" user="sandiduttt2@gmail.com" password="@Hmt#19.63%" >
+			<email:properties >
+				<email:property key="mail.smtp.starttls.enable" value="true" />
+			</email:properties>
+		</email:imap-connection>
+	</email:imap-config>
+	<flow name="testing-appFlow" doc:id="40a80f8f-ee5b-41e9-9c80-830faeabda3e" >
+		<http:listener doc:name="Listener" doc:id="ab9767d0-7b47-4df9-80bf-99178853d773" config-ref="HTTP_Listener_config" path="/test"/>
+		<ee:transform doc:name="Transform Message" doc:id="f33abfb5-1e1d-49bd-bda1-3279c44890e2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message" : "Hi this is a testing mail!"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="8dea1c65-7f55-409d-a249-9bb8a0af0191" message="#[payload]"/>
+	</flow>
+	<flow name="testing-appFlow1" doc:id="17138d22-e858-4441-bc79-c8c0c926d20b">
+		<http:listener doc:name="Listener" doc:id="8246b67c-9991-48e7-a97d-22d0de898d57" config-ref="HTTP_Listener_config" path="/test2" />
+		<set-variable value="#[payload]" doc:name="Set Variable" doc:id="94293fda-38cd-41e8-9aea-bb3d9ffbd5a5" variableName="originalPayload" />
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="aad0b2cb-dcb1-4d40-bf6c-e399b2d231c8"/>
+		<ee:transform doc:name="Transform Message" doc:id="0b946ddb-ddcb-47a1-8b79-6686d837e686" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml writeDeclaration = false
+ns ns0 http://schemas.xmlsoap.org/soap/envelope/
+ns ns01 http://www.starstandards.org/webservices/2009/transport
+ns ns02 http://www.starstandards.org/STAR
+---
+{
+	ns0#Envelope: {
+		ns0#Body: {
+			ns01#ProcessMessageResponse: {
+				ns01#payload: {
+					ns01#content @(id: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.@id): {
+						ns02#AcknowledgeServiceAppointment @(release: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.@release): {
+							ns02#ApplicationArea: {
+								ns02#Sender: {
+									ns02#Component: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#ApplicationArea.ns02#Sender.ns02#Component,
+									ns02#Task: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#ApplicationArea.ns02#Sender.ns02#Task,
+									ns02#CreatorNameCode: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#ApplicationArea.ns02#Sender.ns02#CreatorNameCode,
+									SenderNameCode: "JMA"
+								},
+								ns02#CreationDateTime: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#ApplicationArea.ns02#CreationDateTime,
+								ns02#BODId: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#ApplicationArea.ns02#BODId,
+								ns02#Destination: {
+									ns02#DestinationNameCode: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#ApplicationArea.ns02#Destination.ns02#DestinationNameCode,
+									ns02#StoreNumber: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#ApplicationArea.ns02#Destination.ns02#StoreNumber,
+									ns02#LocationId: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#ApplicationArea.ns02#Destination.ns02#LocationId
+								}
+							},
+							ns02#DataArea: {
+								ns02#Acknowledge: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#Acknowledge,
+								ns02#ServiceAppointment: {
+									ns02#Header: {
+										ns02#DocumentId: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#DocumentId,
+										ns02#Provider: {
+											ns02#PartyId: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#Provider.ns02#PartyId
+										},
+										ns02#IndividualOwner: {
+											ns02#PersonName: {
+												ns02#GivenName: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#IndividualOwner.ns02#PersonName.ns02#GivenName,
+												ns02#MiddleName: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#IndividualOwner.ns02#PersonName.ns02#MiddleName,
+												ns02#FamilyName: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#IndividualOwner.ns02#PersonName.ns02#FamilyName
+											},
+											ns02#Address: {
+												ns02#AddressLine: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#IndividualOwner.ns02#Address.ns02#AddressLine,
+												ns02#City: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#IndividualOwner.ns02#Address.ns02#City,
+												ns02#StateOrProvince: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#IndividualOwner.ns02#Address.ns02#StateOrProvince,
+												ns02#Country: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#IndividualOwner.ns02#Address.ns02#Country,
+												ns02#PostalCode: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#IndividualOwner.ns02#Address.ns02#PostalCode
+											},
+											ns02#Contact: {
+												ns02#Telephone @(desc: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#IndividualOwner.ns02#Contact.ns02#Telephone.@desc): null
+											}
+										},
+										ns02#Vehicle: {
+											ns02#Model: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#Vehicle.ns02#Model,
+											ns02#ModelYear: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#Vehicle.ns02#ModelYear,
+											ns02#Make: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#Vehicle.ns02#Make,
+											ns02#VIN: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#Vehicle.ns02#VIN
+										},
+										ns02#Warranty: {
+											ns02#WarrantyTypeDescription: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#Warranty.ns02#WarrantyTypeDescription
+										},
+										ns02#ServiceContract: {
+											ns02#ContractCompanyName: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#ServiceContract.ns02#ContractCompanyName,
+											ns02#ContractId: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#ServiceContract.ns02#ContractId,
+											ns02#ContractPlanCode: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#ServiceContract.ns02#ContractPlanCode,
+											ns02#ContractType: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#ServiceContract.ns02#ContractType,
+											ns02#ContractPlanDescription: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#ServiceContract.ns02#ContractPlanDescription,
+											ns02#Term @(length: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#ServiceContract.ns02#Term.@length): null,
+											ns02#ContractStartDate: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#ServiceContract.ns02#ContractStartDate,
+											ns02#ContractDeductible @(currency: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#ServiceContract.ns02#ContractDeductible.@currency): null,
+											ns02#ContractExpirationDate: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#ServiceContract.ns02#ContractExpirationDate,
+											ns02#ContractStartMileage @(uom: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#ServiceContract.ns02#ContractStartMileage.@uom): null,
+											ns02#ContractTermMileage @(uom: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#ServiceContract.ns02#ContractTermMileage.@uom): null,
+											ns02#ContractNote: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#ServiceContract.ns02#ContractNote,
+											ns02#ContractEffectiveDate: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#ServiceContract.ns02#ContractEffectiveDate,
+											ns02#ContractPlanStates: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#ServiceContract.ns02#ContractPlanStates,
+											ns02#RoadsideAssistanceInd: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#ServiceContract.ns02#RoadsideAssistanceInd,
+											ns02#RentalAllowance @(currency: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#ServiceContract.ns02#RentalAllowance.@currency): null,
+											ns02#TowingAllowance @(currency: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#ServiceContract.ns02#TowingAllowance.@currency): null,
+											ns02#RentDaysQuantity: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#ServiceContract.ns02#RentDaysQuantity
+										},
+										ns02#MileageIn: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Header.ns02#MileageIn
+									},
+									ns02#Detail: payload.ns0#Envelope.ns0#Body.ns01#ProcessMessageResponse.ns01#payload.ns01#content.ns02#AcknowledgeServiceAppointment.ns02#DataArea.ns02#ServiceAppointment.ns02#Detail
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="da59ef3f-e8db-4184-9103-7e497d2dc316" />
+		<logger level="INFO" doc:name="Logger" doc:id="39caec8e-af00-4b5a-ac8a-e545ece504e1" message="#[payload]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="2cabc084-df61-4c29-a59c-c8b9f48756b7" message="done...."/>
+	</flow>
+</mule>

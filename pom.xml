@@ -3,50 +3,34 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.mycompany</groupId>
-	<artifactId>checkGitWithJenkins3</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<artifactId>checkJenkinsWithGit3</artifactId>
+	<version>1.0.0</version>
 	<packaging>mule-application</packaging>
 
-	<name>checkGitWithJenkins3</name>
+	<name>checkJenkinsWithGit3</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<app.runtime>4.4.0</app.runtime>
-		<mule.maven.plugin.version>3.8.4</mule.maven.plugin.version>
+		<app.runtime>4.4.0-20220221</app.runtime>
+		<mule.maven.plugin.version>3.5.4</mule.maven.plugin.version>
+		<api.version>v1.0</api.version>
+		<exchange.asset.version>1.0.0</exchange.asset.version>
 	</properties>
 
 	<build>
 		<plugins>
 			<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-clean-plugin</artifactId>
-					<version>3.0.0</version>
-			</plugin>
-			
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.0.0</version>
+			</plugin>
+			<plugin>
+				<groupId>org.mule.tools.maven</groupId>
 				<artifactId>mule-maven-plugin</artifactId>
 				<version>${mule.maven.plugin.version}</version>
 				<extensions>true</extensions>
-				<configuration>
-					<cloudHubDeployment>
-					  <uri>https://anypoint.mulesoft.com</uri>
-					  <muleVersion>4.4.0</muleVersion>
-					  <username>sandidutt</username>
-					  <password>Sandi!12.34</password>
-					  <applicationName>GitJenkinsCloudhub</applicationName>
-					  <environment>Sandbox</environment>
-					  <region>us-east-1</region>
-					  <workers>1</workers>
-					  <workerType>MICRO</workerType>
-					  <properties>
-						<env>Sandbox</env>
-					  </properties>
-					  <objectStoreV2>true</objectStoreV2>
-					</cloudHubDeployment>
-				  </configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -110,5 +94,3 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
-
-</project>

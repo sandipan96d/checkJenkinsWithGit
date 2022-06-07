@@ -19,17 +19,14 @@
 
 	<build>
 		<plugins>
+			
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-clean-plugin</artifactId>
-				<version>3.0.0</version>
-			</plugin>
-			<plugin>
-				<groupId>org.mule.tools.maven</groupId>
+				<<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>mule-maven-plugin</artifactId>
 				<version>${mule.maven.plugin.version}</version>
 				<extensions>true</extensions>
 				<configuration>
+					<classifier>mule-application</classifier>
 					<cloudHubDeployment>
 					  <uri>https://anypoint.mulesoft.com</uri>
 					  <muleVersion>4.4.0</muleVersion>
@@ -105,7 +102,7 @@
 			<layout>default</layout>
 			<url>https://repository.mulesoft.org/releases/</url>
 			<snapshots>
-				<enabled>true</enabled>
+				<enabled>false</enabled>
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>

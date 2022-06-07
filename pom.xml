@@ -19,6 +19,11 @@
 
 	<build>
 		<plugins>
+			<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>3.0.0</version>
+			</plugin>
 			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -26,7 +31,6 @@
 				<version>${mule.maven.plugin.version}</version>
 				<extensions>true</extensions>
 				<configuration>
-					<classifier>mule-application</classifier>
 					<cloudHubDeployment>
 					  <uri>https://anypoint.mulesoft.com</uri>
 					  <muleVersion>4.4.0</muleVersion>

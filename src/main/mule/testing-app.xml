@@ -30,7 +30,7 @@ http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/m
 			</email:properties>
 		</email:imap-connection>
 	</email:imap-config>
-	<api-gateway:autodiscovery apiId="17863110" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="880940cf-c38f-444d-ba6e-1fbd8bc86ffa" flowRef="testing-appFlow" />
+	
 	<flow name="testing-appFlow" doc:id="40a80f8f-ee5b-41e9-9c80-830faeabda3e" >
 		<http:listener doc:name="Listener" doc:id="ab9767d0-7b47-4df9-80bf-99178853d773" config-ref="HTTP_Listener_config" path="/test"/>
 		<ee:transform doc:name="Transform Message" doc:id="f33abfb5-1e1d-49bd-bda1-3279c44890e2" >
